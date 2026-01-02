@@ -1,0 +1,24 @@
+version: "3.9"
+
+services:
+  gateway:
+    build: ./gateway
+    ports:
+      - "3000:3000"
+    env_file: .env
+    depends_on:
+      - restaurant-service
+      - beverage-service
+      - event-service
+
+  restaurant-service:
+    build: ./services/restaurant
+    env_file: .env
+
+  beverage-service:
+    build: ./services/beverage
+    env_file: .env
+
+  event-service:
+    build: ./services/event
+    env_file: .env
