@@ -20,7 +20,6 @@ app.get("/health", (_, res) => {
  */
 app.use(
   "/restaurants",
-  authenticate,
   createProxy(process.env.RESTAURANT_SERVICE_URL)
 )
 
