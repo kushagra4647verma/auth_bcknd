@@ -8,7 +8,7 @@ import {
 
 const router = Router()
 
-router.get("/", getAllRestaurants)
+router.get("/restaurants", getAllRestaurants)
 router.get("/restaurants/trending", getTrendingRestaurants)
 router.get("/restaurants/:restaurantId", getRestaurantById)
 router.get("/restaurants/:restaurantId/beverages", getRestaurantBeverages)
