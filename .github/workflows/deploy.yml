@@ -26,4 +26,11 @@ jobs:
           script: |
             cd /opt/backend
             git pull origin main
+            docker compose down
+            docker compose build api-gateway
+            docker compose build event-service
+            docker compose build restaurant-service
+            docker compose build user-service
+            docker compose build social-service
+            docker compose build beverage-service
             docker compose up -d
