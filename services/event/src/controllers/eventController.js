@@ -7,7 +7,7 @@ import { assertRestaurantOwner } from "../utils/ownershipGuard.js"
 export async function getEvents(req, res) {
   const { restaurantId } = req.params
   const userId = req.user.sub
-
+///////////
   await assertRestaurantOwner(restaurantId, userId)
 
   const { data, error } = await supabase
