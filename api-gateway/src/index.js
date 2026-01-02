@@ -9,19 +9,34 @@ const app = express()
 app.use(express.json())
 
 /**
- * Health check
+ * Health check (no auth)
  */
 app.get("/health", (_, res) => {
   res.json({ status: "API Gateway running" })
 })
 
 /**
- * User App Routes
+ * ===== RESTAURANTS =====
  */
+
+// Base route (fixes 404 on /restaurants)
+app.get("/restaurants", authenticate, (req, res) => {
+  res.json({ message: "Restaurants API root" })
+})
+
+// Proxy all sub-routes
 app.use(
-  "/restaurants", authenticate,
+  "/restaurants",
+  authenticate,
   createProxy(process.env.RESTAURANT_SERVICE_URL)
 )
+
+/**
+ * ===== BEVERAGES =====
+ */
+app.get("/beverages", authenticate, (_, res) => {
+  res.json({ message: "Beverages API root" })
+})
 
 app.use(
   "/beverages",
@@ -29,11 +44,25 @@ app.use(
   createProxy(process.env.BEVERAGE_SERVICE_URL)
 )
 
+/**
+ * ===== EVENTS =====
+ */
+app.get("/events", authenticate, (_, res) => {
+  res.json({ message: "Events API root" })
+})
+
 app.use(
   "/events",
   authenticate,
   createProxy(process.env.EVENT_SERVICE_URL)
 )
+
+/**
+ * ===== USERS =====
+ */
+app.get("/users", authenticate, (_, res) => {
+  res.json({ message: "Users API root" })
+})
 
 app.use(
   "/users",
@@ -41,6 +70,9 @@ app.use(
   createProxy(process.env.USER_SERVICE_URL)
 )
 
+/**
+ * ===== USER SUB-RESOURCES =====
+ */
 app.use(
   "/bookmarks",
   authenticate,
@@ -53,13 +85,20 @@ app.use(
   createProxy(process.env.USER_SERVICE_URL)
 )
 
+/**
+ * ===== SOCIAL =====
+ */
+app.get("/friends", authenticate, (_, res) => {
+  res.json({ message: "Friends API root" })
+})
+
 app.use(
   "/friends",
   authenticate,
   createProxy(process.env.SOCIAL_SERVICE_URL)
 )
 
-const PORT = process.env.PORT||4000
+const PORT = process.env.PORT || 4000
 app.listen(PORT, () => {
   console.log(`🚀 API Gateway running on port ${PORT}`)
 })
