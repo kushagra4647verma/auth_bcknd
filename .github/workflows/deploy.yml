@@ -23,14 +23,39 @@ jobs:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script_stop: true
           script: |
             cd /opt/backend
             git pull origin main
+
+            # Stop all running containers
             docker compose down
-            docker compose build api-gateway
-            docker compose build event-service
-            docker compose build restaurant-service
-            docker compose build user-service
-            docker compose build social-service
-            docker compose build beverage-service
+
+            # Build all services
+            echo "🔨 Building User App services..."
+            docker compose build user-gateway
+            docker compose build user-restaurant-service
+            docker compose build user-beverage-service
+            docker compose build user-event-service
+            docker compose build user-user-service
+            docker compose build user-social-service
+
+            echo "🔨 Building Restaurant Onboarding services..."
+            docker compose build restaurant-onboarding-gateway
+            docker compose build onboarding-restaurant-service
+            docker compose build onboarding-beverage-service
+            docker compose build onboarding-event-service
+
+            echo "🔨 Building Sipzy Expert services..."
+            docker compose build sipzy-expert-gateway
+            docker compose build expert-expert-service
+            docker compose build expert-restaurant-service
+
+            # Start all services
+            echo "🚀 Starting all services..."
             docker compose up -d
+
+            # Cleanup unused images
+            docker image prune -f
+
+            echo "✅ Deployment complete!"

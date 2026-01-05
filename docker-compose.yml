@@ -1,60 +1,218 @@
+version: "3.9"
+
+networks:
+  sipzy-network:
+    driver: bridge
+
 services:
-  api-gateway:
-    build: ./api-gateway
-    container_name: api-gateway
+  # ============================================
+  # NGINX REVERSE PROXY (Main Entry Point)
+  # ============================================
+  nginx:
+    image: nginx:alpine
+    container_name: nginx-proxy
     ports:
-      - "80:4000"        # ONLY public entry
-    env_file:
-      - .env
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
     depends_on:
-      - restaurant-service
-      - beverage-service
-      - event-service
-      - user-service
-      - social-service
+      - user-gateway
+      - restaurant-onboarding-gateway
+      - sipzy-expert-gateway
+    networks:
+      - sipzy-network
     restart: always
 
-  restaurant-service:
-    build: ./restaurant-service
-    container_name: restaurant-service
+  # ============================================
+  # USER APP SERVICES (user/)
+  # ============================================
+  user-gateway:
+    build: ./user/api-gateway
+    container_name: user-gateway
     expose:
-      - "4001"           # internal only
+      - "4000"
     env_file:
-      - .env
+      - ./user/.env
+    environment:
+      - RESTAURANT_SERVICE_URL=http://user-restaurant-service:4001
+      - BEVERAGE_SERVICE_URL=http://user-beverage-service:4002
+      - EVENT_SERVICE_URL=http://user-event-service:4003
+      - USER_SERVICE_URL=http://user-user-service:4004
+      - SOCIAL_SERVICE_URL=http://user-social-service:4005
+    depends_on:
+      - user-restaurant-service
+      - user-beverage-service
+      - user-event-service
+      - user-user-service
+      - user-social-service
+    networks:
+      - sipzy-network
     restart: always
 
-  beverage-service:
-    build: ./beverage-service
-    container_name: beverage-service
+  user-restaurant-service:
+    build: ./user/restaurant-service
+    container_name: user-restaurant-service
+    expose:
+      - "4001"
+    env_file:
+      - ./user/.env
+    networks:
+      - sipzy-network
+    restart: always
+
+  user-beverage-service:
+    build: ./user/beverage-service
+    container_name: user-beverage-service
     expose:
       - "4002"
     env_file:
-      - .env
+      - ./user/.env
+    networks:
+      - sipzy-network
     restart: always
 
-  event-service:
-    build: ./event-service
-    container_name: event-service
+  user-event-service:
+    build: ./user/event-service
+    container_name: user-event-service
     expose:
       - "4003"
     env_file:
-      - .env
+      - ./user/.env
+    networks:
+      - sipzy-network
     restart: always
 
-  user-service:
-    build: ./user-service
-    container_name: user-service
+  user-user-service:
+    build: ./user/user-service
+    container_name: user-user-service
     expose:
       - "4004"
     env_file:
-      - .env
+      - ./user/.env
+    networks:
+      - sipzy-network
     restart: always
 
-  social-service:
-    build: ./social-service
-    container_name: social-service
+  user-social-service:
+    build: ./user/social-service
+    container_name: user-social-service
     expose:
       - "4005"
     env_file:
-      - .env
+      - ./user/.env
+    networks:
+      - sipzy-network
     restart: always
+
+  # ============================================
+  # RESTAURANT ONBOARDING SERVICES (restaurant_onboarding/)
+  # ============================================
+  restaurant-onboarding-gateway:
+    build: ./restaurant_onboarding/gateway
+    container_name: restaurant-onboarding-gateway
+    expose:
+      - "3000"
+    env_file:
+      - ./restaurant_onboarding/.env
+    environment:
+      - RESTAURANT_SERVICE_URL=http://onboarding-restaurant-service:5001
+      - BEVERAGE_SERVICE_URL=http://onboarding-beverage-service:5002
+      - EVENT_SERVICE_URL=http://onboarding-event-service:5003
+    depends_on:
+      - onboarding-restaurant-service
+      - onboarding-beverage-service
+      - onboarding-event-service
+    networks:
+      - sipzy-network
+    restart: always
+
+  onboarding-restaurant-service:
+    build: ./restaurant_onboarding/services/restaurant
+    container_name: onboarding-restaurant-service
+    expose:
+      - "5001"
+    env_file:
+      - ./restaurant_onboarding/.env
+    networks:
+      - sipzy-network
+    restart: always
+
+  onboarding-beverage-service:
+    build: ./restaurant_onboarding/services/beverage
+    container_name: onboarding-beverage-service
+    expose:
+      - "5002"
+    env_file:
+      - ./restaurant_onboarding/.env
+    networks:
+      - sipzy-network
+    restart: always
+
+  onboarding-event-service:
+    build: ./restaurant_onboarding/services/event
+    container_name: onboarding-event-service
+    expose:
+      - "5003"
+    env_file:
+      - ./restaurant_onboarding/.env
+    networks:
+      - sipzy-network
+    restart: always
+
+  # ============================================
+  # SIPZY EXPERT SERVICES (sipzy_expert/)
+  # ============================================
+  sipzy-expert-gateway:
+    build: ./sipzy_expert/api-gateway
+    container_name: sipzy-expert-gateway
+    expose:
+      - "4000"
+    env_file:
+      - ./sipzy_expert/.env
+    environment:
+      - EXPERT_SERVICE_URL=http://expert-expert-service:6001
+      - RESTAURANT_SERVICE_URL=http://expert-restaurant-service:6002
+    depends_on:
+      - expert-expert-service
+      - expert-restaurant-service
+    networks:
+      - sipzy-network
+    restart: always
+
+  expert-expert-service:
+    build: ./sipzy_expert/expert-service
+    container_name: expert-expert-service
+    expose:
+      - "6001"
+    env_file:
+      - ./sipzy_expert/.env
+    networks:
+      - sipzy-network
+    restart: always
+
+  expert-restaurant-service:
+    build: ./sipzy_expert/restaurant-service
+    container_name: expert-restaurant-service
+    expose:
+      - "6002"
+    env_file:
+      - ./sipzy_expert/.env
+    networks:
+      - sipzy-network
+    restart: always
+
+  # ============================================
+  # ADMIN SERVICES (admin/) - Add when ready
+  # ============================================
+  # admin-gateway:
+  #   build: ./admin/api-gateway
+  #   container_name: admin-gateway
+  #   expose:
+  #     - "7000"
+  #   env_file:
+  #     - ./admin/.env
+  #   networks:
+  #     - sipzy-network
+  #   restart: always
