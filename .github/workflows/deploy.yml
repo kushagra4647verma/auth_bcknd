@@ -46,10 +46,10 @@ jobs:
             docker compose build onboarding-beverage-service
             docker compose build onboarding-event-service
 
-            echo "🔨 Building Sipzy Expert services..."
-            docker compose build sipzy-expert-gateway
-            docker compose build expert-expert-service
-            docker compose build expert-restaurant-service
+            # echo "🔨 Building Sipzy Expert services..."
+            # docker compose build sipzy-expert-gateway
+            # docker compose build expert-expert-service
+            # docker compose build expert-restaurant-service
 
             # Start all services
             echo "🚀 Starting all services..."
