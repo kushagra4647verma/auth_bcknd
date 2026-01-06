@@ -19,7 +19,7 @@ services:
     depends_on:
       - user-gateway
       - restaurant-onboarding-gateway
-      - sipzy-expert-gateway
+      # - sipzy-expert-gateway
     networks:
       - sipzy-network
     restart: always
@@ -163,44 +163,44 @@ services:
   # ============================================
   # SIPZY EXPERT SERVICES (sipzy_expert/)
   # ============================================
-  sipzy-expert-gateway:
-    build: ./sipzy_expert/api-gateway
-    container_name: sipzy-expert-gateway
-    expose:
-      - "4000"
-    env_file:
-      - ./sipzy_expert/.env
-    environment:
-      - EXPERT_SERVICE_URL=http://expert-expert-service:6001
-      - RESTAURANT_SERVICE_URL=http://expert-restaurant-service:6002
-    depends_on:
-      - expert-expert-service
-      - expert-restaurant-service
-    networks:
-      - sipzy-network
-    restart: always
+  # sipzy-expert-gateway:
+  #   build: ./sipzy_expert/api-gateway
+  #   container_name: sipzy-expert-gateway
+  #   expose:
+  #     - "4000"
+  #   env_file:
+  #     - ./sipzy_expert/.env
+  #   environment:
+  #     - EXPERT_SERVICE_URL=http://expert-expert-service:6001
+  #     - RESTAURANT_SERVICE_URL=http://expert-restaurant-service:6002
+  #   depends_on:
+  #     - expert-expert-service
+  #     - expert-restaurant-service
+  #   networks:
+  #     - sipzy-network
+  #   restart: always
 
-  expert-expert-service:
-    build: ./sipzy_expert/expert-service
-    container_name: expert-expert-service
-    expose:
-      - "6001"
-    env_file:
-      - ./sipzy_expert/.env
-    networks:
-      - sipzy-network
-    restart: always
+  # expert-expert-service:
+  #   build: ./sipzy_expert/expert-service
+  #   container_name: expert-expert-service
+  #   expose:
+  #     - "6001"
+  #   env_file:
+  #     - ./sipzy_expert/.env
+  #   networks:
+  #     - sipzy-network
+  #   restart: always
 
-  expert-restaurant-service:
-    build: ./sipzy_expert/restaurant-service
-    container_name: expert-restaurant-service
-    expose:
-      - "6002"
-    env_file:
-      - ./sipzy_expert/.env
-    networks:
-      - sipzy-network
-    restart: always
+  # expert-restaurant-service:
+  #   build: ./sipzy_expert/restaurant-service
+  #   container_name: expert-restaurant-service
+  #   expose:
+  #     - "6002"
+  #   env_file:
+  #     - ./sipzy_expert/.env
+  #   networks:
+  #     - sipzy-network
+  #   restart: always
 
   # ============================================
   # ADMIN SERVICES (admin/) - Add when ready
