@@ -19,6 +19,7 @@ services:
     depends_on:
       - user-gateway
       - restaurant-onboarding-gateway
+      - admin-gateway
       # - sipzy-expert-gateway
     networks:
       - sipzy-network
@@ -203,15 +204,30 @@ services:
   #   restart: always
 
   # ============================================
-  # ADMIN SERVICES (admin/) - Add when ready
+  # ADMIN SERVICES (admin/)
   # ============================================
-  # admin-gateway:
-  #   build: ./admin/api-gateway
-  #   container_name: admin-gateway
-  #   expose:
-  #     - "7000"
-  #   env_file:
-  #     - ./admin/.env
-  #   networks:
-  #     - sipzy-network
-  #   restart: always
+  admin-gateway:
+    build: ./admin/gateway
+    container_name: admin-gateway
+    expose:
+      - "3100"
+    env_file:
+      - ./admin/.env
+    environment:
+      - ADMIN_SERVICE_URL=http://admin-service:5000
+    depends_on:
+      - admin-service
+    networks:
+      - sipzy-network
+    restart: always
+
+  admin-service:
+    build: ./admin/services/admin
+    container_name: admin-service
+    expose:
+      - "5000"
+    env_file:
+      - ./admin/.env
+    networks:
+      - sipzy-network
+    restart: always
