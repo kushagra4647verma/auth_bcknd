@@ -5,17 +5,17 @@ export async function addFriend(userId, friendId) {
     throw new Error("Cannot add yourself as friend")
   }
 
-  // Mutual friendship
+  // Mutual friendship - parallel insert
   await Promise.all([
     repo.insertFriend(userId, friendId),
     repo.insertFriend(friendId, userId)
   ])
 
-  // Recalculate counts (correct-by-design)
-  await Promise.all([
+  // Fire and forget - don't wait for count recalculation
+  Promise.all([
     repo.recalculateFriendCount(userId),
     repo.recalculateFriendCount(friendId)
-  ])
+  ]).catch(console.error)
 
   return { message: "Friend added" }
 }
@@ -26,10 +26,11 @@ export async function removeFriend(userId, friendId) {
     repo.deleteFriend(friendId, userId)
   ])
 
-  await Promise.all([
+  // Fire and forget - don't wait for count recalculation
+  Promise.all([
     repo.recalculateFriendCount(userId),
     repo.recalculateFriendCount(friendId)
-  ])
+  ]).catch(console.error)
 
   return { message: "Friend removed" }
 }

@@ -32,8 +32,8 @@ export async function createOrUpdateRating(
   // Upsert user rating
   await repo.upsertUserRating(userId, beverageId, rating, comments)
 
-  // Recalculate aggregates (correct-by-design)
-  await repo.recalculateAggregates(beverageId)
+  // Fire and forget - recalculate aggregates in background
+  repo.recalculateAggregates(beverageId).catch(console.error)
 
   return { message: "Rating saved" }
 }

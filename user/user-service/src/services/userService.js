@@ -14,13 +14,15 @@ export async function fetchMyProfile(userId) {
 
 export async function addBookmark(userId, restaurantId) {
   await repo.insertBookmark(userId, restaurantId)
-  await repo.recalculateBookmarkCount(userId)
+  // Fire and forget - don't wait for count recalculation
+  repo.recalculateBookmarkCount(userId).catch(console.error)
   return { message: "Bookmarked" }
 }
 
 export async function removeBookmark(userId, restaurantId) {
   await repo.deleteBookmark(userId, restaurantId)
-  await repo.recalculateBookmarkCount(userId)
+  // Fire and forget - don't wait for count recalculation
+  repo.recalculateBookmarkCount(userId).catch(console.error)
   return { message: "Bookmark removed" }
 }
 
