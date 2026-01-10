@@ -21,18 +21,22 @@ export async function deleteFriend(userId, friendId) {
 export async function getFriends(userId) {
   const { data, error } = await supabase
     .from("friends")
-    .select(`
-      friendId,
-      users:userId!friends_friendId_fkey (
-        userId,
-        name,
-        phone
-      )
-    `)
+    .select(`friendId`)
     .eq("userId", userId)
 
   if (error) throw error
-  return data.map(f => f.users)
+
+  if (!data || data.length === 0) return []
+
+  // Fetch friend profiles separately
+  const friendIds = data.map(f => f.friendId)
+  const { data: profiles, error: profileError } = await supabase
+    .from("profiles")
+    .select("id, name, phone")
+    .in("id", friendIds)
+
+  if (profileError) throw profileError
+  return profiles
 }
 
 export async function recalculateFriendCount(userId) {

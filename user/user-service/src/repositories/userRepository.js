@@ -43,14 +43,22 @@ export async function deleteBookmark(userId, restaurantId) {
 export async function getBookmarks(userId) {
   const { data, error } = await supabase
     .from("bookmarks")
-    .select(`
-      restaurantId,
-      restaurants (*)
-    `)
+    .select(`restaurantId`)
     .eq("userId", userId)
 
   if (error) throw error
-  return data.map(b => b.restaurants)
+
+  if (!data || data.length === 0) return []
+
+  // Fetch restaurant details separately
+  const restaurantIds = data.map(b => b.restaurantId)
+  const { data: restaurants, error: restError } = await supabase
+    .from("restaurants")
+    .select("*")
+    .in("id", restaurantIds)
+
+  if (restError) throw restError
+  return restaurants
 }
 
 export async function recalculateBookmarkCount(userId) {

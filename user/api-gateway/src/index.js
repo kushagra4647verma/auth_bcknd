@@ -1,21 +1,12 @@
 import express from "express"
 import dotenv from "dotenv"
-import compression from "compression"
-import cors from "cors"
 import { authenticate } from "./authMiddleware.js"
 import { createProxy } from "./proxy.js"
 
 dotenv.config()
 
 const app = express()
-
-// Performance optimizations
-app.use(compression()) // Gzip compression for faster responses
-app.use(cors())
-app.use(express.json({ limit: "1mb" }))
-
-// Disable x-powered-by header for security
-app.disable("x-powered-by")
+app.use(express.json())
 
 /**
  * Health check
