@@ -1,8 +1,9 @@
 import { supabase } from "../db.js"
+import { tables } from "../utils/tableNames.js"
 
 export async function getUserProfile(userId) {
   const { data, error } = await supabase
-    .from("profiles")
+    .from(tables.profiles)
     .select("id, name, phone")
     .eq("id", userId)
     .single()
@@ -13,7 +14,7 @@ export async function getUserProfile(userId) {
 
 export async function getUserBadges(userId) {
   const { data, error } = await supabase
-    .from("badges")
+    .from(tables.badges)
     .select("*")
     .eq("userId", userId)
     .single()
@@ -24,7 +25,7 @@ export async function getUserBadges(userId) {
 
 export async function insertBookmark(userId, restaurantId) {
   const { error } = await supabase
-    .from("bookmarks")
+    .from(tables.bookmarks)
     .insert({ userId, restaurantId })
 
   if (error) throw error
@@ -32,7 +33,7 @@ export async function insertBookmark(userId, restaurantId) {
 
 export async function deleteBookmark(userId, restaurantId) {
   const { error } = await supabase
-    .from("bookmarks")
+    .from(tables.bookmarks)
     .delete()
     .eq("userId", userId)
     .eq("restaurantId", restaurantId)
@@ -42,7 +43,7 @@ export async function deleteBookmark(userId, restaurantId) {
 
 export async function getBookmarks(userId) {
   const { data, error } = await supabase
-    .from("bookmarks")
+    .from(tables.bookmarks)
     .select(`restaurantId`)
     .eq("userId", userId)
 
@@ -53,7 +54,7 @@ export async function getBookmarks(userId) {
   // Fetch restaurant details separately
   const restaurantIds = data.map(b => b.restaurantId)
   const { data: restaurants, error: restError } = await supabase
-    .from("restaurants")
+    .from(tables.restaurants)
     .select("*")
     .in("id", restaurantIds)
 
@@ -63,12 +64,12 @@ export async function getBookmarks(userId) {
 
 export async function recalculateBookmarkCount(userId) {
   const { count } = await supabase
-    .from("bookmarks")
+    .from(tables.bookmarks)
     .select("*", { count: "exact", head: true })
     .eq("userId", userId)
 
   await supabase
-    .from("badges")
+    .from(tables.badges)
     .upsert({
       userId,
       bookmarkCount: count
@@ -77,7 +78,7 @@ export async function recalculateBookmarkCount(userId) {
 
 export async function insertDiary(userId, payload) {
   const { data, error } = await supabase
-    .from("diary")
+    .from(tables.diary)
     .insert({ userId, ...payload })
     .select()
     .single()
@@ -88,7 +89,7 @@ export async function insertDiary(userId, payload) {
 
 export async function getDiary(userId) {
   const { data, error } = await supabase
-    .from("diary")
+    .from(tables.diary)
     .select("*")
     .eq("userId", userId)
     .order("createdAt", { ascending: false })
@@ -99,7 +100,7 @@ export async function getDiary(userId) {
 
 export async function updateDiary(userId, entryId, payload) {
   const { data, error } = await supabase
-    .from("diary")
+    .from(tables.diary)
     .update(payload)
     .eq("entryId", entryId)
     .eq("userId", userId)
@@ -112,7 +113,7 @@ export async function updateDiary(userId, entryId, payload) {
 
 export async function deleteDiary(userId, entryId) {
   const { error } = await supabase
-    .from("diary")
+    .from(tables.diary)
     .delete()
     .eq("entryId", entryId)
     .eq("userId", userId)

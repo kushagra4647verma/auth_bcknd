@@ -1,8 +1,9 @@
 import { supabase } from "../db.js"
+import { tables } from "../utils/tableNames.js"
 
 export async function insertFriend(userId, friendId) {
   const { error } = await supabase
-    .from("friends")
+    .from(tables.friends)
     .upsert({ userId, friendId })
 
   if (error) throw error
@@ -10,7 +11,7 @@ export async function insertFriend(userId, friendId) {
 
 export async function deleteFriend(userId, friendId) {
   const { error } = await supabase
-    .from("friends")
+    .from(tables.friends)
     .delete()
     .eq("userId", userId)
     .eq("friendId", friendId)
@@ -20,7 +21,7 @@ export async function deleteFriend(userId, friendId) {
 
 export async function getFriends(userId) {
   const { data, error } = await supabase
-    .from("friends")
+    .from(tables.friends)
     .select(`friendId`)
     .eq("userId", userId)
 
@@ -31,7 +32,7 @@ export async function getFriends(userId) {
   // Fetch friend profiles separately
   const friendIds = data.map(f => f.friendId)
   const { data: profiles, error: profileError } = await supabase
-    .from("profiles")
+    .from(tables.profiles)
     .select("id, name, phone")
     .in("id", friendIds)
 
@@ -41,12 +42,12 @@ export async function getFriends(userId) {
 
 export async function recalculateFriendCount(userId) {
   const { count } = await supabase
-    .from("friends")
+    .from(tables.friends)
     .select("*", { count: "exact", head: true })
     .eq("userId", userId)
 
   await supabase
-    .from("badges")
+    .from(tables.badges)
     .upsert({
       userId,
       friendsCount: count

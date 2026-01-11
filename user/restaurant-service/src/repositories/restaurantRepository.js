@@ -1,8 +1,9 @@
 import { supabase } from "../db.js"
+import { tables } from "../utils/tableNames.js"
 
 export async function getVerifiedRestaurants() {
   const { data, error } = await supabase
-    .from("restaurants")
+    .from(tables.restaurants)
     .select("*")
     .eq("isVerified", true)
 
@@ -12,12 +13,12 @@ export async function getVerifiedRestaurants() {
 
 export async function getTrendingRestaurants() {
   const { data, error } = await supabase
-    .from("trendingRestaurants")
+    .from(tables.trendingRestaurants)
     .select(`
       restaurantId,
-      restaurants!inner (*)
+      ${tables.restaurants}!inner (*)
     `)
-    .eq("restaurants.isVerified", true)
+    .eq(`${tables.restaurants}.isVerified`, true)
 
   if (error) throw error
 
@@ -27,7 +28,7 @@ export async function getTrendingRestaurants() {
 
 export async function getRestaurantById(restaurantId) {
   const { data, error } = await supabase
-    .from("restaurants")
+    .from(tables.restaurants)
     .select("*")
     .eq("id", restaurantId)
     .eq("isVerified", true)
@@ -50,7 +51,7 @@ export async function getRestaurantById(restaurantId) {
 
 export async function getRestaurantBeverages(restaurantId) {
   const { data, error } = await supabase
-    .from("beverages")
+    .from(tables.beverages)
     .select("*")
     .eq("restaurantid", restaurantId)
 

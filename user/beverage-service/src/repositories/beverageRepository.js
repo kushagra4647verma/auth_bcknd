@@ -1,9 +1,10 @@
 import { supabase } from "../db.js"
+import { tables } from "../utils/tableNames.js"
 
 export async function getBeverageById(beverageId) {
   // console.log(beverageId);
   const { data, error } = await supabase
-    .from("beverages")
+    .from(tables.beverages)
     .select("*")
     .eq("id", beverageId)
     .single()
@@ -14,7 +15,7 @@ export async function getBeverageById(beverageId) {
 
 export async function getAggregatedRatings(beverageId) {
   const { data, error } = await supabase
-    .from("beverageRatings")
+    .from(tables.beverageRatings)
     .select("*")
     .eq("beverageid", beverageId)
     .single()
@@ -45,7 +46,7 @@ export async function upsertUserRating(
   comments
 ) {
   const { error } = await supabase
-    .from("userRatings")
+    .from(tables.userRatings)
     .upsert({
       userId,
       beverageId,
@@ -58,7 +59,7 @@ export async function upsertUserRating(
 
 export async function recalculateAggregates(beverageId) {
   const { data, error } = await supabase
-    .from("userRatings")
+    .from(tables.userRatings)
     .select("rating")
     .eq("beverageId", beverageId)
 
@@ -68,7 +69,7 @@ export async function recalculateAggregates(beverageId) {
   const count = data.length
 
   await supabase
-    .from("beverageRatings")
+    .from(tables.beverageRatings)
     .upsert({
       beverageId,
       sumRatingsHuman: sum,
