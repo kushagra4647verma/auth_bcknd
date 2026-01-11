@@ -6,7 +6,7 @@ export async function getUpcomingEvents() {
   const { data, error } = await supabase
     .from("restaurantEvents")
     .select("*")
-    .gte("date", today)
+    .gte("eventDate", today)
     .order("eventDate", { ascending: true })
 
   if (error) throw error
