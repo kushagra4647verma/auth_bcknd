@@ -38,7 +38,7 @@ jobs:
             docker compose build user-event-service
             docker compose build user-user-service
             docker compose build user-social-service
-
+            docker compose build user-expert-service 
             echo "🔨 Building Restaurant Onboarding services..."
             docker compose build restaurant-onboarding-gateway
             docker compose build onboarding-restaurant-service
