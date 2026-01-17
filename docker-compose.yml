@@ -17,10 +17,8 @@ services:
       - /etc/letsencrypt:/etc/letsencrypt:ro
       - /var/www/certbot:/var/www/certbot:ro
     depends_on:
-      - user-gateway
-      - restaurant-onboarding-gateway
-      - admin-gateway
-      # - sipzy-expert-gateway
+    - auth_service
+    - restaurant-onboarding-gateway
     networks:
       - sipzy-network
     restart: always
