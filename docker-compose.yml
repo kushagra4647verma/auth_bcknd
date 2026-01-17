@@ -43,6 +43,7 @@ services:
       - EVENT_SERVICE_URL=http://user-event-service:4003
       - USER_SERVICE_URL=http://user-user-service:4004
       - SOCIAL_SERVICE_URL=http://user-social-service:4005
+
     depends_on:
       - user-restaurant-service
       - user-beverage-service
@@ -111,6 +112,7 @@ services:
   # ============================================
   # RESTAURANT ONBOARDING SERVICES (restaurant_onboarding/)
   # ============================================
+  
   restaurant-onboarding-gateway:
     build: ./restaurant_onboarding/gateway
     container_name: restaurant-onboarding-gateway
@@ -230,6 +232,20 @@ services:
       - "5000"
     env_file:
       - ./admin/.env
+    networks:
+      - sipzy-network
+    restart: always
+
+  # ============================================
+  # AUTH SERVICE
+  # ============================================
+  auth_service:
+    build: ./auth_service
+    container_name: auth_service
+    expose:
+      - "5000"
+    env_file:
+      - ./.env
     networks:
       - sipzy-network
     restart: always

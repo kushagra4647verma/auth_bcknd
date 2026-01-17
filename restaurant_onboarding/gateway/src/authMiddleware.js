@@ -1,23 +1,18 @@
-import jwt from "jsonwebtoken"
+import axios from "axios"
 
-export function authenticate(req, res, next) {
-  const token = req.headers.authorization?.split(" ")[1]
-  if (!token) {
-    console.log("authenticate: No token provided")
-    return res.sendStatus(401)
-  }
-
+export async function authenticate(req, res, next) {
   try {
-    const payload = jwt.decode(token)
-    if (!payload) {
-      console.log("authenticate: Failed to decode token")
-      return res.sendStatus(401)
+    const token = req.headers.authorization
+    if (!token) {
+      return res.status(401).json({ error: "Missing token" })
     }
-    console.log("authenticate: User ID from token:", payload.sub)
-    req.user = payload
+
+    await axios.get("http://auth_service:5000/auth/verify", {
+      headers: { authorization: token }
+    })
+
     next()
-  } catch (err) {
-    console.error("authenticate: Error decoding token:", err)
-    res.sendStatus(401)
+  } catch {
+    return res.status(401).json({ error: "Unauthorized" })
   }
 }
