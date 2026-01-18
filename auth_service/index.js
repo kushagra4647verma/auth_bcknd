@@ -64,16 +64,24 @@ app.post("/auth/sms-hook", async (req, res) => {
     return res.status(400).json({ error: "Invalid payload" })
   }
 
-  console.log(`[SMS-HOOK] Storing OTP for ${user.phone}. Current Store Size: ${otpStore.size}`)
-  console.log(`[SMS-HOOK] OTP content:`, sms)
-
+  // ✅ Normalize phone ONCE
   const normalizedPhone = user.phone.replace(/\D/g, "")
 
+  // ✅ Store OTP
   otpStore.set(normalizedPhone, {
     otp: sms.otp,
     timestamp: Date.now()
   })
 
+  // ✅ LOG AFTER SET (this was the bug)
+  console.log(
+    `[SMS-HOOK] Storing OTP for ${normalizedPhone}. Current Store Size: ${otpStore.size}`
+  )
+
+  console.log(
+    `[SMS-HOOK] OTP content:`,
+    { otp: sms.otp, phone: normalizedPhone }
+  )
 
   await sendSms(
     user.phone,
@@ -86,14 +94,12 @@ app.post("/auth/sms-hook", async (req, res) => {
 /**
  * DEV OTP fetch
  */
-
 app.get("/auth/dev-otp/:phone", (req, res) => {
   // if (process.env.NODE_ENV !== "development") {
   //   return res.sendStatus(403)
   // }
 
   const phone = req.params.phone.replace(/\D/g, "")
-
   const entry = otpStore.get(phone)
 
   if (!entry) {
