@@ -1,24 +1,30 @@
-version: "3.9"
-
 services:
   gateway:
     build: ./gateway
     ports:
       - "3000:3000"
     env_file: .env
+    environment:
+      - API_GATEWAY_PORT=3000
     depends_on:
-      - restaurant-service
-      - beverage-service
-      - event-service
+      - onboarding-restaurant-service
+      - onboarding-beverage-service
+      - onboarding-event-service
 
-  restaurant-service:
+  onboarding-restaurant-service:
     build: ./services/restaurant
     env_file: .env
+    environment:
+      - PORT=5001
 
-  beverage-service:
+  onboarding-beverage-service:
     build: ./services/beverage
     env_file: .env
+    environment:
+      - PORT=5002
 
-  event-service:
+  onboarding-event-service:
     build: ./services/event
     env_file: .env
+    environment:
+      - PORT=5003
