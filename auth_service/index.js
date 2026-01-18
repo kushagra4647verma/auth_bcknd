@@ -67,10 +67,13 @@ app.post("/auth/sms-hook", async (req, res) => {
   console.log(`[SMS-HOOK] Storing OTP for ${user.phone}. Current Store Size: ${otpStore.size}`)
   console.log(`[SMS-HOOK] OTP content:`, sms)
 
-  otpStore.set(user.phone, {
+  const normalizedPhone = user.phone.replace(/\D/g, "")
+
+  otpStore.set(normalizedPhone, {
     otp: sms.otp,
     timestamp: Date.now()
   })
+
 
   await sendSms(
     user.phone,
@@ -89,16 +92,15 @@ app.get("/auth/dev-otp/:phone", (req, res) => {
   //   return res.sendStatus(403)
   // }
 
-  const phone = decodeURIComponent(req.params.phone)
-  const data = otpStore.get(phone)
+  const phone = req.params.phone.replace(/\D/g, "")
 
-  console.log(
-    `[DEV-OTP] Fetching OTP for ${phone}. Store size: ${otpStore.size}`
-  )
+  const entry = otpStore.get(phone)
 
-  if (!data) return res.sendStatus(404)
+  if (!entry) {
+    return res.status(404).json({ error: "OTP not found" })
+  }
 
-  res.json({ otp: data.otp })
+  return res.json({ otp: entry.otp })
 })
 
 /**
