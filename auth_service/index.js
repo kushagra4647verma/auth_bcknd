@@ -45,6 +45,9 @@ async function sendSms(phone, message) {
  * Supabase SMS Hook
  */
 app.post("/auth/sms-hook", async (req, res) => {
+  console.log("[SMS-HOOK] Received headers:", req.headers)
+  console.log("[SMS-HOOK] Received body:", JSON.stringify(req.body, null, 2))
+
   const signature = req.headers["x-supabase-signature"]
   const secret = process.env.SUPABASE_SMS_HOOK_SECRET
 
@@ -57,6 +60,9 @@ app.post("/auth/sms-hook", async (req, res) => {
   if (!user?.phone || !sms?.otp) {
     return res.status(400).json({ error: "Invalid payload" })
   }
+
+  console.log(`[SMS-HOOK] Storing OTP for ${user.phone}. Current Store Size: ${otpStore.size}`)
+  console.log(`[SMS-HOOK] OTP content:`, sms)
 
   otpStore.set(user.phone, {
     otp: sms.otp,
@@ -79,6 +85,8 @@ app.get("/auth/dev-otp/:phone", (req, res) => {
     return res.sendStatus(403)
   }
 
+  console.log(`[DEV-OTP] Fetching OTP for ${user.phone}. Current Store Size: ${otpStore.size}`)
+  console.log(`[DEV-OTP] OTP content:`, sms)
   const phone = decodeURIComponent(req.params.phone)
   const data = otpStore.get(phone)
 
