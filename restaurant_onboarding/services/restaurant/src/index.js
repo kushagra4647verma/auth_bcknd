@@ -12,7 +12,7 @@ app.use((req, res, next) => {
 })
 
 // apply auth BEFORE routes
-app.use(authenticate)
+// app.use(authenticate)
 
 // Mount routes at /restaurants - gateway sends full path like /restaurants/me
 app.use("/restaurants", restaurantRoutes)

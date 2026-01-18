@@ -1,0 +1,16 @@
+{
+    "name": "sipzy-backend",
+    "version": "1.0.0",
+    "description": "Sipzy Backend Services",
+    "scripts": {
+        "install:all": "npm install && cd auth_service && npm install && cd ../restaurant_onboarding/gateway && npm install && cd ../services/restaurant && npm install && cd ../beverage && npm install && cd ../event && npm install",
+        "start:auth": "cd auth_service && node index.js",
+        "start:gateway": "cd restaurant_onboarding/gateway && node src/index.js",
+        "start:restaurant": "cd restaurant_onboarding/services/restaurant && node src/index.js",
+        "start:beverage": "cd restaurant_onboarding/services/beverage && node src/index.js",
+        "start:event": "cd restaurant_onboarding/services/event && node src/index.js",
+        "dev": "echo 'Run each start command in a separate terminal: npm run start:auth, npm run start:gateway, etc.'"
+    },
+    "author": "",
+    "license": "ISC"
+}
