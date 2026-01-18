@@ -1,3 +1,6 @@
+import dotenv from "dotenv"
+dotenv.config()
+
 import express from "express"
 import crypto from "crypto"
 
@@ -80,17 +83,21 @@ app.post("/auth/sms-hook", async (req, res) => {
 /**
  * DEV OTP fetch
  */
+
 app.get("/auth/dev-otp/:phone", (req, res) => {
   if (process.env.NODE_ENV !== "development") {
     return res.sendStatus(403)
   }
 
-  console.log(`[DEV-OTP] Fetching OTP for ${user.phone}. Current Store Size: ${otpStore.size}`)
-  console.log(`[DEV-OTP] OTP content:`, sms)
   const phone = decodeURIComponent(req.params.phone)
   const data = otpStore.get(phone)
 
+  console.log(
+    `[DEV-OTP] Fetching OTP for ${phone}. Store size: ${otpStore.size}`
+  )
+
   if (!data) return res.sendStatus(404)
+
   res.json({ otp: data.otp })
 })
 
