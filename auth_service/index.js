@@ -4,6 +4,10 @@ dotenv.config()
 import express from "express"
 import crypto from "crypto"
 
+app.use(cors())
+app.options("*", cors())
+app.use(express.json())
+
 const app = express()
 app.use(express.json())
 
