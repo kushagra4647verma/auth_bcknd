@@ -51,7 +51,7 @@ async function sendSms(phone, message) {
 /**
  * Supabase SMS Hook
  */
-app.post("/onboarding/auth/sms-hook", async (req, res) => {
+app.post("/auth/sms-hook", async (req, res) => {
   console.log("[SMS-HOOK] Received headers:", req.headers)
   console.log("[SMS-HOOK] Received body:", JSON.stringify(req.body, null, 2))
 
@@ -98,7 +98,7 @@ app.post("/onboarding/auth/sms-hook", async (req, res) => {
 /**
  * DEV OTP fetch
  */
-app.get("/onboarding/auth/dev-otp/:phone", (req, res) => {
+app.get("/auth/dev-otp/:phone", (req, res) => {
   // if (process.env.NODE_ENV !== "development") {
   //   return res.sendStatus(403)
   // }
@@ -116,7 +116,7 @@ app.get("/onboarding/auth/dev-otp/:phone", (req, res) => {
 /**
  * Token validation (used by gateway)
  */
-app.get("/onboarding/auth/verify", (req, res) => {
+app.get("/auth/verify", (req, res) => {
   const token = req.headers.authorization
   if (!token) return res.sendStatus(401)
 
