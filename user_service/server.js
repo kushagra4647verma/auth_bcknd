@@ -9,17 +9,14 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-// Supabase client
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY,
 );
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Authentication middleware
 function authenticate(req, res, next) {
   const token = req.headers.authorization?.split(" ")[1];
   if (!token) return res.sendStatus(401);
@@ -33,9 +30,8 @@ function authenticate(req, res, next) {
   }
 }
 
-// Health check
 app.get("/health", (req, res) => {
-  res.json({ status: "API running", timestamp: new Date().toISOString() });
+  res.json({ status: "User API running", timestamp: new Date().toISOString() });
 });
 
 // ==================== RESTAURANT ROUTES ====================
@@ -653,6 +649,6 @@ app.get("/api/experts/:expertId/ratings", authenticate, async (req, res) => {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📍 Health check: http://localhost:${PORT}/health`);
+  console.log(`🚀 User API running on port ${PORT}`);
+  console.log(`📍 Health: http://localhost:${PORT}/health`);
 });
