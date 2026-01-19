@@ -11,6 +11,6 @@ app.use(beverageRoutes)
 const PORT = process.env.PORT || 3002
 
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Restaurant service running on port ${PORT}`)
+  console.log(`Beverage service running on port ${PORT}`)
 })
 
