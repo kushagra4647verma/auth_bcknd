@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import express from "express"
 import restaurantRoutes from "./routes/restaurantRoutes.js"
 import { authenticate } from "./middleware/authMiddleware.js"
@@ -23,6 +24,8 @@ app.use((req, res) => {
   res.status(404).json({ error: "Not found" })
 })
 
-app.listen(5001, () => {
-  console.log("Restaurant service running on 5001")
+const PORT = process.env.PORT || 3001
+
+app.listen(PORT, () => {
+  console.log(`Restaurant service running on port ${PORT}`)
 })

@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import express from "express"
 import eventRoutes from "./routes/eventRoutes.js"
 import { authenticate } from "./middleware/authMiddleware.js"
@@ -7,6 +8,8 @@ app.use(express.json())
 app.use(authenticate)
 app.use(eventRoutes)
 
-app.listen(5003, () => {
-  console.log("Event service running on 5003")
+const PORT = process.env.PORT || 3003
+
+app.listen(PORT, () => {
+  console.log(`Event service running on port ${PORT}`)
 })

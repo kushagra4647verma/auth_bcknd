@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import express from "express"
 import beverageRoutes from "./routes/beverageRoutes.js"
 import { authenticate } from "./middleware/authMiddleware.js"
@@ -7,6 +8,8 @@ app.use(express.json())
 app.use(authenticate)
 app.use(beverageRoutes)
 
-app.listen(5002, () => {
-  console.log("Beverage service running on 5002")
+const PORT = process.env.PORT || 3002
+
+app.listen(PORT, () => {
+  console.log(`Beverage service running on port ${PORT}`)
 })
