@@ -1,17 +1,20 @@
 {
-  "name": "user-backend-api",
+  "name": "user-service-monorepo",
   "version": "1.0.0",
   "type": "module",
-  "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node --watch server.js"
-  },
-  "dependencies": {
-    "@supabase/supabase-js": "^2.45.0",
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
-    "express": "^4.19.2",
-    "jsonwebtoken": "^9.0.2"
+    "install:all": "cd api_gateway && npm install && cd ../restaurants_service && npm install && cd ../beverages_service && npm install && cd ../events_service && npm install && cd ../experts_service && npm install && cd ../users_service && npm install",
+    "start:gateway": "cd api_gateway && npm start",
+    "start:restaurants": "cd restaurants_service && npm start",
+    "start:beverages": "cd beverages_service && npm start",
+    "start:events": "cd events_service && npm start",
+    "start:experts": "cd experts_service && npm start",
+    "start:users": "cd users_service && npm start",
+    "dev:gateway": "cd api_gateway && npm run dev",
+    "dev:restaurants": "cd restaurants_service && npm run dev",
+    "dev:beverages": "cd beverages_service && npm run dev",
+    "dev:events": "cd events_service && npm run dev",
+    "dev:experts": "cd experts_service && npm run dev",
+    "dev:users": "cd users_service && npm run dev"
   }
 }
