@@ -98,7 +98,7 @@ app.post("/auth/sms-hook", async (req, res) => {
 /**
  * DEV OTP fetch
  */
-app.get("onboarding/auth/dev-otp/:phone", (req, res) => {
+app.get("/auth/dev-otp/:phone", (req, res) => {
   // if (process.env.NODE_ENV !== "development") {
   //   return res.sendStatus(403)
   // }
