@@ -4,12 +4,12 @@ dotenv.config()
 import express from "express"
 import crypto from "crypto"
 
-app.use(cors())
-app.options("*", cors())
-app.use(express.json())
+
 
 const app = express()
 app.use(express.json())
+app.use(cors())
+app.options("*", cors())
 
 // ---------------- OTP STORE ----------------
 const otpStore = new Map()
